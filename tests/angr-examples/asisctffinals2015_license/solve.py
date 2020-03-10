@@ -41,7 +41,7 @@ def main(mem_type = 1):
     content.set_state(state)
     content.store(0, bytes)
 
-    license_file = angr.storage.SimFile(license_name, 'rw', content=content, size=len(bytes) / 8)
+    license_file = angr.storage.SimFile(license_name, content=content, size=len(bytes) / 8)
 
     # Build the file system dict
     # This interface might change in the near future

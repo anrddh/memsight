@@ -19,16 +19,13 @@ mkvirtualenv $VIRTUALENV_NAME || true
 # angr stuff
 echo "Installing angr..."
 pip install --no-deps -r $DIR/../requirements.txt
-pip install angr==7.7.12.16
+#pip install angr==7.8.8.1
 #pip install -I --no-use-wheel capstone==3.0.4 # fix error import
 #pip install --force-reinstall angr claripy
 
 # patches
 echo "Applying patches"
 cd ~/.virtualenvs/$VIRTUALENV_NAME/lib/python2.7/site-packages/
-
-git config --global user.email "test@test.com"
-git config --global user.name "Tizio Caio"
 
 # track angr changes
 cd angr; git init; git add . >/dev/null; git commit -a -m "initial import" >/dev/null; cd ..

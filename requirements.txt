@@ -24,8 +24,9 @@ rpyc==3.4.4
 sortedcontainers==1.5.7
 unicorn==1.0.1
 z3-solver==4.5.1.0.post2
-archinfo==7.7.12.16
-cle==7.7.12.16
-claripy==7.7.12.16
-pyvex==7.7.12.16
-#angr==7.7.12.16
+archinfo==7.8.8.1
+cle==7.8.8.1
+claripy==7.8.8.1
+pyvex==7.8.8.1
+ailment==7.8.9.26
+angr==7.8.8.1
