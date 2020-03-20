@@ -1034,7 +1034,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             return self._id
 
     @profile
-    def copy(self):
+    def copy(self, arg2=None):
 
         if self.verbose: self.log("Copying memory")
         s = SymbolicMemory(memory_backer=self._memory_backer,
