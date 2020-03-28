@@ -1,5 +1,5 @@
-from node import *
-from interval import *
+from .node import *
+from .interval import *
 
 class IntervalTree(object):
     def __init__(self):
@@ -21,14 +21,14 @@ class IntervalTree(object):
         if end is None:
             if isinstance(begin, Interval):
                 interval = begin
-            elif type(begin) in (int, long):
+            elif type(begin) in (int, int):
                 ris = []
                 self.root.child.search_point(begin, ris)
                 return ris
             else:
                 raise Exception("search(): wrong types")
         else:
-            assert type(begin) in (int, long) and type(end) in (int, long) and begin <= end
+            assert type(begin) in (int, int) and type(end) in (int, int) and begin <= end
             interval = Interval(begin, end)
 
         if self.root.child is None:
@@ -86,12 +86,12 @@ class IntervalTree(object):
         if end is None:
             if isinstance(begin, Interval):
                 interval = begin
-            elif type(begin) in (int, long):
+            elif type(begin) in (int, int):
                 interval = Interval(begin, begin)
             else:
                 raise Exception("search(): wrong types")
         else:
-            assert type(begin) in (int, long) and type(end) in (int, long) and begin <= end
+            assert type(begin) in (int, int) and type(end) in (int, int) and begin <= end
             interval = Interval(begin, end)
 
         if self.root.child is None:
@@ -102,16 +102,16 @@ class IntervalTree(object):
 
 
     def _print(self, node, tabs):
-        print "\t"*tabs, "[", node.interval.begin, ",", node.interval.end, "]", "max =", node.max, "| bf =", node.balancing_factor, "| parent =", node.parent.interval
+        print("\t"*tabs, "[", node.interval.begin, ",", node.interval.end, "]", "max =", node.max, "| bf =", node.balancing_factor, "| parent =", node.parent.interval)
         if node.left_child is not None:
-            print "\t"*tabs, "  Left:"
+            print("\t"*tabs, "  Left:")
             self._print(node.left_child, tabs+1)
         if node.right_child is not None:
-            print "\t"*tabs, "  Right:"
+            print("\t"*tabs, "  Right:")
             self._print(node.right_child, tabs+1)
 
     def dump(self):
         if self.root.child is None:
-            print "void tree"
+            print("void tree")
         else:
             self._print(self.root.child, 0)

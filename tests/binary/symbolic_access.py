@@ -22,5 +22,5 @@ def do_end(state, params, pg):
 
 	v = state.regs.eax
 	sol = state.se.eval_upto(v, 10)
-	print sol
+	print(sol)
 

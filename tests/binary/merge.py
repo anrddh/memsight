@@ -35,5 +35,5 @@ def do_end(state, params, pg, verbose=True):
     assert len(set(eax)) == 8
 
     if verbose:
-        print "I: " + str(edi)
-        print "SUM:" + str(eax)
+        print("I: " + str(edi))
+        print("SUM:" + str(eax))

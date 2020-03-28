@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 import sys
-from parser import parser 
-from pitree import pitree 
+from .parser import parser 
+from .pitree import pitree 
 
 
 class runner(parser):
@@ -25,7 +25,7 @@ class runner(parser):
         parser._do_update(self, parms)
         t = self.pitrees[parms[0]]
         i_pitree = None
-        for i in t.search(0, sys.maxint):
+        for i in t.search(0, sys.maxsize):
             if i.data == parms[1]:
                 assert i_pitree == None
                 i_pitree = i
@@ -42,7 +42,7 @@ class runner(parser):
         return runner._tree2set(t, parms[1], parms[2])
 
     @classmethod
-    def _tree2set(cls, t, begin=0, end=sys.maxint):
+    def _tree2set(cls, t, begin=0, end=sys.maxsize):
         s = set()
         for i in t.search(begin, end):
             s.add((i.begin, i.end, i.data))
@@ -50,7 +50,7 @@ class runner(parser):
 
 # test
 def main(args):
-     print "opening log file %s" % args[0]
+     print("opening log file %s" % args[0])
      t = runner()
      t.run(args[0])
      return 0

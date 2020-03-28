@@ -1,6 +1,6 @@
 import resource
 
-import executor_config
+from . import executor_config
 import angr
 import sys
 import pyvex
@@ -15,24 +15,24 @@ class Executor(object):
         self.start, self.avoid, self.end, self.config, self.binary = executor_config.get_target_addrs(f)
 
         if verbose:
-            print
-            print "Starting symbolic execution of metabinary: " + str(f)
-            print "From address: " + str(hex(self.start) if self.start is not None else 'NONE')
-            print "Target addresses: " + ' '.join(map(lambda a: str(hex(a)), self.end))
-            print "Avoid addresses: " + ' '.join(map(lambda a: str(hex(a)), self.avoid))
-            print
+            print()
+            print("Starting symbolic execution of metabinary: " + str(f))
+            print("From address: " + str(hex(self.start) if self.start is not None else 'NONE'))
+            print("Target addresses: " + ' '.join([str(hex(a)) for a in self.end]))
+            print("Avoid addresses: " + ' '.join([str(hex(a)) for a in self.avoid]))
+            print()
 
         self.project = angr.Project(self.binary, load_options={'auto_load_libs' : False})
 
     def _print_constraints(self, constraints, old_constraints):
         
-        print "Path constraints:"
+        print("Path constraints:")
         if old_constraints is None:
             for i in range(len(constraints)):
-                print "\t" + str(constraints[i])
+                print("\t" + str(constraints[i]))
             if len(constraints) == 0:
-                print "\tNone"
-            print
+                print("\tNone")
+            print()
             return None
 
         else:
@@ -42,7 +42,7 @@ class Executor(object):
                 cache.append(str(c))
 
             if len(constraints) == 0 and len(cache) == 0:
-                print "\tNone\n"
+                print("\tNone\n")
                 return cache
 
             l = []
@@ -58,19 +58,19 @@ class Executor(object):
             cache = l
 
             if len(removed) > 0:
-                print "\tRemoved:"
+                print("\tRemoved:")
                 for s in removed:
-                    print "\t\t" + str(s)
+                    print("\t\t" + str(s))
 
             if len(added) > 0:
-                print "\tAdded:"
+                print("\tAdded:")
                 for s in added:
-                    print "\t\t" + str(s)
+                    print("\t\t" + str(s))
 
             if len(removed) == 0 and len(added) == 0:
-                print "\tSame as previous state."
+                print("\tSame as previous state.")
 
-            print       
+            print()       
 
     def _common_run(self, mem_memory = None, reg_memory = None, verbose=True):
 
@@ -103,7 +103,7 @@ class Executor(object):
             veritesting = data['veritesting']
             _boundaries += self.end
             if verbose:
-                print "Veritesting: " + str(veritesting)
+                print("Veritesting: " + str(veritesting))
 
         max_rounds = None
         if 'max_rounds' in data:
@@ -137,7 +137,7 @@ class Executor(object):
 
             if verbose:
                 sys.stdout.write("depth=" + str(k) + " ")
-                print pg
+                print(pg)
 
             pg.explore(avoid=self.avoid, find=self.end, n=1)
 
@@ -147,19 +147,19 @@ class Executor(object):
 
         if len(pg.found) > 0:
             if verbose:
-                print "Reached the target"
-                print pg
+                print("Reached the target")
+                print(pg)
             state = pg.found[0].state
             self.config.do_end(state, data, pg, verbose)
         else:
             if verbose:
-                print pg
-                print "No state has reached the target"
+                print(pg)
+                print("No state has reached the target")
 
         #assert len(pg.found) > 0
         if verbose:
-            print
-            print "Memory footprint: \t" + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024) + " MB"
+            print()
+            print("Memory footprint: \t" + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024) + " MB")
 
         return len(pg.found) > 0
 
@@ -186,19 +186,19 @@ class Executor(object):
             state = sm.active[0]
             addr = state.ip.args[0]
             
-            print "\n###################################################"
-            print "\nNumber of active states: " + str(len(sm.active))
-            print "Executing first active path in the list"
-            print "Path is at address: " + str(hex(addr)) 
+            print("\n###################################################")
+            print("\nNumber of active states: " + str(len(sm.active)))
+            print("Executing first active path in the list")
+            print("Path is at address: " + str(hex(addr))) 
 
             code = self.project.factory.block(addr=addr, num_inst=num_inst, backup_state=state)  
 
             # print original code line
-            print "Assembly code: "
+            print("Assembly code: ")
             k = 0
             for i, s in enumerate(code.vex.statements): 
                 if isinstance(s, pyvex.stmt.IMark):
-                    print "\t" + str(code.capstone.insns[k])
+                    print("\t" + str(code.capstone.insns[k]))
                     k += 1
 
             code.vex.pp()
@@ -212,15 +212,15 @@ class Executor(object):
 
             #pdb.set_trace()    
 
-            print sm
-            print sm.active
+            print(sm)
+            print(sm.active)
 
-            print "# Start of execution"
+            print("# Start of execution")
             if not veritesting:
                 sm.step(opt_level=1, num_inst=num_inst, )  # selector_func = lambda x: x is path
             else:
                 sm.step()
-            print "# End of execution\n"
+            print("# End of execution\n")
 
             remove = []
             for path in sm.active:
@@ -229,7 +229,7 @@ class Executor(object):
                 if ip in self.avoid:
                     avoided.append(path)
                     remove.append(path) 
-                    print "\nPath executing " + str(hex(ip)) + " has been moved to avoided paths..."
+                    print("\nPath executing " + str(hex(ip)) + " has been moved to avoided paths...")
                 
                 if ip in self.end:
                     found.append(path)
@@ -239,18 +239,18 @@ class Executor(object):
                 sm.active.remove(path)
 
         if len(sm.active) == 0 and len(found) == 0:
-            print "Something went wrong: no active path, but no found path!"
+            print("Something went wrong: no active path, but no found path!")
             pdb.set_trace()
             assert False
             sys.exit(1)
 
-        print "One path has reached target instruction: " + str(hex(found[0].state.ip.args[0]))
+        print("One path has reached target instruction: " + str(hex(found[0].state.ip.args[0])))
         state = found[0].state
-        print len(found)
+        print(len(found))
         self.config.do_end(state, data, sm)
-        print "Constraints:"
+        print("Constraints:")
         self._print_constraints(state.se.constraints, None)
         #pdb.set_trace()
 
-        print
-        print "Memory footprint: \t" + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024) + " MB"
+        print()
+        print("Memory footprint: \t" + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024) + " MB")

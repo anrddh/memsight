@@ -81,74 +81,74 @@ def test_8():
     assert ris == expected
 
 if __name__=="__main__":
-    print "- Test 1"
+    print("- Test 1")
     try:
         test_1()
     except:
-        print bcolors.FAIL + "  Not passed" + bcolors.ENDC
+        print(bcolors.FAIL + "  Not passed" + bcolors.ENDC)
         traceback.print_exc(file=sys.stderr)
         sys.exit(1)
-    print bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n"
+    print(bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n")
 
-    print "- Test 2"
+    print("- Test 2")
     try:
         test_2()
     except:
-        print bcolors.FAIL + "  Not passed" + bcolors.ENDC
+        print(bcolors.FAIL + "  Not passed" + bcolors.ENDC)
         traceback.print_exc(file=sys.stderr)
         sys.exit(1)
-    print bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n"
+    print(bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n")
 
-    print "- Test 3"
+    print("- Test 3")
     try:
         test_3()
     except:
-        print bcolors.FAIL + "  Not passed" + bcolors.ENDC
+        print(bcolors.FAIL + "  Not passed" + bcolors.ENDC)
         traceback.print_exc(file=sys.stderr)
         sys.exit(1)
-    print bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n"
+    print(bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n")
 
-    print "- Test 4"
+    print("- Test 4")
     try:
         test_4()
     except:
-        print bcolors.FAIL + "  Not passed" + bcolors.ENDC
+        print(bcolors.FAIL + "  Not passed" + bcolors.ENDC)
         traceback.print_exc(file=sys.stderr)
         sys.exit(1)
-    print bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n"
+    print(bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n")
 
-    print "- Test 5"
+    print("- Test 5")
     try:
         test_5()
     except:
-        print bcolors.FAIL + "  Not passed" + bcolors.ENDC
+        print(bcolors.FAIL + "  Not passed" + bcolors.ENDC)
         traceback.print_exc(file=sys.stderr)
         sys.exit(1)
-    print bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n"
+    print(bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n")
 
-    print "- Test 6"
+    print("- Test 6")
     try:
         test_6()
     except:
-        print bcolors.FAIL + "  Not passed" + bcolors.ENDC
+        print(bcolors.FAIL + "  Not passed" + bcolors.ENDC)
         traceback.print_exc(file=sys.stderr)
         sys.exit(1)
-    print bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n"
+    print(bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n")
 
-    print "- Test 7"
+    print("- Test 7")
     try:
         test_7()
     except:
-        print bcolors.FAIL + "  Not passed" + bcolors.ENDC
+        print(bcolors.FAIL + "  Not passed" + bcolors.ENDC)
         traceback.print_exc(file=sys.stderr)
         sys.exit(1)
-    print bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n"
+    print(bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n")
 
-    print "- Test 8"
+    print("- Test 8")
     try:
         test_8()
     except:
-        print bcolors.FAIL + "  Not passed" + bcolors.ENDC
+        print(bcolors.FAIL + "  Not passed" + bcolors.ENDC)
         traceback.print_exc(file=sys.stderr)
         sys.exit(1)
-    print bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n"
+    print(bcolors.OKGREEN + "  Passed" + bcolors.ENDC + "\n")

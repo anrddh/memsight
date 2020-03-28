@@ -22,11 +22,11 @@ def do_end(state, params, pg, verbose=True):
 	for k in range(len(sol)):
 		edi.append(ctypes.c_int((sol[k] & (0xFFFFFFFF << 32)) >> 32).value)
 		esi.append(ctypes.c_int(sol[k] & 0xFFFFFFFF).value)
-		assert edi[-1] in (2L, -2147483646)
+		assert edi[-1] in (2, -2147483646)
 		assert esi[-1] in (0,)
 
 	if 	verbose:
-		print "EDI: " + str(edi)
-		print "ESI: " + str(esi)
-		print "Constraints:"
-		print state.se.constraints
+		print("EDI: " + str(edi))
+		print("ESI: " + str(esi))
+		print("Constraints:")
+		print(state.se.constraints)

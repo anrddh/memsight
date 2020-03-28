@@ -20,8 +20,8 @@ limitations under the License.
 """
 
 import collections, sys
-from intervaltree import * # use custom interval tree
-from interval import *
+from .intervaltree import * # use custom interval tree
+from .interval import *
 from pympler import asizeof    
 
 # ----------------------------------------------------------------------
@@ -120,7 +120,7 @@ class pitree:
         n_lazy_pages  = sum(1 for p in self._pages if p.data.lazycopy)
         m_page_size   = max(len(p.data.tree) for p in self._pages) if len(self._pages) > 0 else 0
         obj_size      = asizeof.asizeof(self)
-        all_intervals = self.search(0, sys.maxint)
+        all_intervals = self.search(0, sys.maxsize)
         s_range       = sum(i.end-i.begin for i in all_intervals)
         m_range       = max(i.end-i.begin for i in all_intervals) if s_range > 0 else 0
         return pitree.stats(num_pages       = len(self._lookup),          \
@@ -166,7 +166,7 @@ class pitree:
             if (s.num_1_intervals > max_1_intervals): max_1_intervals = s.num_1_intervals
             if (s.max_page_size   > max_page_size):   max_page_size   = s.max_page_size
             if (s.max_range       > max_range):       max_range       = s.max_range
-        print "[pitree] tot size=%d bytes"          % tot_size                  + \
+        print("[pitree] tot size=%d bytes"          % tot_size                  + \
                      ", num trees=%d"               % n                         + \
                      ", of which lazy=%3.0f%%"      % ((100.0*tot_lazy_trees/n) if n > 0 else 0)  + \
                      ", avg pages per tree=%d"      % (tot_pages/n)             + \
@@ -180,7 +180,7 @@ class pitree:
                      ", avg range=%d"               % (tot_range/tot_intervals if tot_intervals != 0 else 0) + \
                      ", max range=%d"               % max_range                 + \
                      ", tot ints=%d"                % tot_intervals             + \
-                     ""
+                     "")
 
     def copy(self):
         """
@@ -253,7 +253,7 @@ class pitree:
             self._lazycopy = False
             pages  = IntervalTree()
             lookup = dict()
-            for p in self._lookup.values():
+            for p in list(self._lookup.values()):
                 n = p.copy()
                 lookup[(p.begin, p.end)] = n
                 pages.addi(n.begin, n.end, n)

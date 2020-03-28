@@ -12,7 +12,7 @@ class parser:
             self._do_op(op)
 
     def _do_op(self, op):
-        parms = map(lambda i: int(i), op[1:])
+        parms = [int(i) for i in op[1:]]
         if   op[0] == 'c': self._do_copy(parms)
         elif op[0] == 'a': self._do_add(parms)
         elif op[0] == 'u': self._do_update(parms)
@@ -23,30 +23,30 @@ class parser:
         self.cnt += 1
 
     def _do_round(self, parms):
-        print "%d round %s" % (self.cnt, str(parms))
+        print("%d round %s" % (self.cnt, str(parms)))
         self.round = parms[0]
 
     def _do_copy(self, parms):
-        print "%d copy %s" % (self.cnt, str(parms))
+        print("%d copy %s" % (self.cnt, str(parms)))
         assert parms[0] in self.lookup
         assert parms[1] not in self.lookup
         self.lookup[parms[1]] = self.round
 
     def _do_add(self, parms):
-        print "%d add %s" % (self.cnt, str(parms))
+        print("%d add %s" % (self.cnt, str(parms)))
         assert parms[0] in self.lookup
 
     def _do_update(self, parms):
-        print "%d update %s" % (self.cnt, str(parms))
+        print("%d update %s" % (self.cnt, str(parms)))
         assert parms[0] in self.lookup
 
     def _do_new(self, parms):
-        print "%d new %s" % (self.cnt, str(parms))
+        print("%d new %s" % (self.cnt, str(parms)))
         assert parms[0] not in self.lookup
         self.lookup[parms[0]] = self.round
 
     def _do_search(self, parms):
-        print "%d search %s" % (self.cnt, str(parms))
+        print("%d search %s" % (self.cnt, str(parms)))
         assert parms[0] in self.lookup
 
     @classmethod

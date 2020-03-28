@@ -2,7 +2,7 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 import utils
-import range_fully_symbolic_memory
+from . import range_fully_symbolic_memory
 
 def get_angr_symbolic_memory(angr_project):
     mem_memory = None

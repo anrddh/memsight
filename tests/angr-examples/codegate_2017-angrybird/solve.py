@@ -51,4 +51,4 @@ if __name__ == '__main__':
 
 	start_time = time.time()
 	test()
-	print "Elapsed time: " + str(time.time() - start_time)
+	print("Elapsed time: " + str(time.time() - start_time))

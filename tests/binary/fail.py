@@ -26,5 +26,5 @@ def do_end(state, params, pg, verbose=True):
 		assert edi[-1] == esi[-1]
 
 	if verbose:
-		print "EDI: " + str(edi)
-		print "ESI: " + str(esi)
+		print("EDI: " + str(edi))
+		print("ESI: " + str(esi))

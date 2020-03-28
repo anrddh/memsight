@@ -28,9 +28,9 @@ def main(mem_type = 1):
 
     bytes = None
     constraints = [ ]
-    for i in xrange(5):
+    for i in range(5):
         line = [ ]
-        for j in xrange(6):
+        for j in range(6):
             line.append(state.solver.BVS('license_file_byte_%d_%d' % (i, j), 8))
             state.add_constraints(line[-1] != 0x0a)
         if bytes is None:
@@ -84,5 +84,5 @@ if __name__ == '__main__':
     import time
     start_time = time.time()
     test()
-    print "Elapsed time: " + str(time.time() - start_time)
+    print("Elapsed time: " + str(time.time() - start_time))
 

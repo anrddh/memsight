@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys 
-from pitree import pitree 
+from .pitree import pitree 
 from pympler import asizeof, tracker
 
 # test
@@ -16,49 +16,49 @@ def main(args):
     t.add(1639, 3007, "four")
     t.add(1639, 3007, "four'")
 
-    print "t"
-    for i in t.search(0,sys.maxint): print i
+    print("t")
+    for i in t.search(0,sys.maxsize): print(i)
 
-    print "update t:"
+    print("update t:")
     for i in t.search(1250, 1251):
         i = t.update_item(i, i.data + "---")
-        print i.begin, " ", i.end, " ", i.data
+        print(i.begin, " ", i.end, " ", i.data)
 
-    print "r = copy of t"
+    print("r = copy of t")
     r = t.copy()
 
-    print "update r:"
+    print("update r:")
     for i in r.search(123, 2400):
         i = r.update_item(i, i.data + "*")
-        print i.begin, " ", i.end, " ", i.data
+        print(i.begin, " ", i.end, " ", i.data)
 
-    print "update again t:"
+    print("update again t:")
     for i in t.search(4600, 4601):
         i = t.update_item(i, i.data + "###")
-        print i.begin, " ", i.end, " ", i.data
+        print(i.begin, " ", i.end, " ", i.data)
 
-    print "t"
-    for i in t.search(0,sys.maxint): print i
+    print("t")
+    for i in t.search(0,sys.maxsize): print(i)
 
-    print "r"
-    for i in r.search(0,sys.maxint): print i
+    print("r")
+    for i in r.search(0,sys.maxsize): print(i)
 
-    print "s = copy of r"
+    print("s = copy of r")
     s = r.copy()
 
-    print "add to s"
+    print("add to s")
     s.add(113, 1784, "five")
     s.add(114, 1784, "six")
     s.add(114, 1784, "seven")
 
-    print "t"
-    for i in t.search(0,sys.maxint): print i
+    print("t")
+    for i in t.search(0,sys.maxsize): print(i)
 
-    print "r"
-    for i in r.search(0,sys.maxint): print i
+    print("r")
+    for i in r.search(0,sys.maxsize): print(i)
 
-    print "s"
-    for i in s.search(0,sys.maxint): print i
+    print("s")
+    for i in s.search(0,sys.maxsize): print(i)
 
     pitree.print_stats([t.get_stats(), r.get_stats(), s.get_stats()])
 

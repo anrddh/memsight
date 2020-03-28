@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 import sys
-from runner import runner 
-from untree import Untree
+from .runner import runner 
+from .untree import Untree
 
 
 class tester(runner):
@@ -28,7 +28,7 @@ class tester(runner):
         runner._do_update(self, parms)
         t = self.untrees[parms[0]]
         i_untree = None
-        for i in t.search(0, sys.maxint):
+        for i in t.search(0, sys.maxsize):
             if i.data == parms[1]:
                 assert i_untree == None
                 i_untree = i
@@ -55,7 +55,7 @@ class tester(runner):
     def _dump_tree(self, t, tree_id):
         f = open("dump.log", "w") 
         f.write("n,%d\n" % tree_id)
-        for i in t.search(0, sys.maxint):
+        for i in t.search(0, sys.maxsize):
             f.write("a,%d,%d,%d,%d\n" % (tree_id, i.begin, i.end, i.data))
         f.close()
 
@@ -71,15 +71,15 @@ class tester(runner):
     @classmethod
     def _check_sets(cls, s_pitree, s_untree, msg):
         if s_pitree != s_untree:
-            print msg
-            print "    s_pitree - s_untree = " + str(s_pitree - s_untree)
-            print "    s_untree - s_pitree = " + str(s_untree - s_pitree)
+            print(msg)
+            print("    s_pitree - s_untree = " + str(s_pitree - s_untree))
+            print("    s_untree - s_pitree = " + str(s_untree - s_pitree))
             return False
         return True
 
 # test
 def main(args):
-     print "opening log file %s" % args[0]
+     print("opening log file %s" % args[0])
      t = tester()
      t.run(args[0])
      return 0

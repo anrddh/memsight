@@ -32,5 +32,5 @@ def do_end(state, params, pg, verbose=True):
     assert set(edi) == set(expected_sol)
     assert set(esi) == set(expected_sol)
     if verbose:
-        print "EDI: " + str(edi)
-        print "ESI: " + str(esi)
+        print("EDI: " + str(edi))
+        print("ESI: " + str(esi))

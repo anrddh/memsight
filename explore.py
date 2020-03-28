@@ -1,12 +1,12 @@
 
-from executor import executor
-from memory import factory
-from memory import range_fully_symbolic_memory
-from utils import parse_args
+from .executor import executor
+from .memory import factory
+from .memory import range_fully_symbolic_memory
+from .utils import parse_args
 
 import sys
-import memory.factory
-import utils
+from . import memory.factory
+from . import utils
 import logging
 
 if __name__ == '__main__':

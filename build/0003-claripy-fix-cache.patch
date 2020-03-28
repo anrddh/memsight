@@ -2,7 +2,7 @@ diff --git a/claripy/frontend_mixins/model_cache_mixin.py b/claripy/frontend_mix
 index 0e08fc6..d759c00 100644
 --- a/claripy/frontend_mixins/model_cache_mixin.py
 +++ b/claripy/frontend_mixins/model_cache_mixin.py
-@@ -75,33 +75,33 @@ class ModelCacheMixin(object):
+@@ -76,33 +76,33 @@ class ModelCacheMixin:
          super(ModelCacheMixin, self).__init__(*args, **kwargs)
          self._models = set()
          self._exhausted = False
@@ -35,29 +35,16 @@ index 0e08fc6..d759c00 100644
 +        c._max_exhausted = weakref.WeakKeyDictionary(self._max_exhausted)
 +        c._min_exhausted = weakref.WeakKeyDictionary(self._min_exhausted)
 
-     def _ana_getstate(self):
-         return (
-             self._models,
-             self._exhausted,
--            tuple(self._eval_exhausted),
--            tuple(self._max_exhausted),
--            tuple(self._min_exhausted),
-+            dict(self._eval_exhausted),
-+            dict(self._max_exhausted),
-+            dict(self._min_exhausted),
-             super(ModelCacheMixin, self)._ana_getstate()
-         )
-
-@@ -115,9 +115,9 @@ class ModelCacheMixin(object):
-             base_state
-         ) = s
-         super(ModelCacheMixin, self)._ana_setstate(base_state)
--        self._eval_exhausted = weakref.WeakSet(_eval_exhausted)
--        self._max_exhausted = weakref.WeakSet(_max_exhausted)
--        self._min_exhausted = weakref.WeakSet(_min_exhausted)
-+        self._eval_exhausted = weakref.WeakKeyDictionary(_eval_exhausted)
-+        self._max_exhausted = weakref.WeakKeyDictionary(_max_exhausted)
-+        self._min_exhausted = weakref.WeakKeyDictionary(_min_exhausted)
+     def __setstate__(self, base_state):
+         super().__setstate__(base_state)
+         self._models = set()
+         self._exhausted = False
+-        self._eval_exhausted = weakref.WeakSet()
+-        self._max_exhausted = weakref.WeakSet()
+-        self._min_exhausted = weakref.WeakSet()
++        self._eval_exhausted = weakref.WeakKeyDictionary()
++        self._max_exhausted = weakref.WeakKeyDictionary()
++        self._min_exhausted = weakref.WeakKeyDictionary()
 
      #
      # Model cleaning

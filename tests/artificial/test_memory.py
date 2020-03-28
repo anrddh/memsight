@@ -11,9 +11,9 @@ from memory import factory
 def check(state, obj, exp_values, conditions=()):
     r = state.se.any_n_int(obj, len(exp_values) + 1, extra_constraints=conditions)
     if len(r) != len(exp_values) or set(r) != set(exp_values):
-        print "Mismatch:"
-        print "\tobtained: " + str(r)
-        print "\texpected: " + str(exp_values)
+        print("Mismatch:")
+        print("\tobtained: " + str(r))
+        print("\texpected: " + str(exp_values))
     assert len(r) == len(exp_values) and set(r) == set(exp_values)
 
 def test_store_with_symbolic_size(state):

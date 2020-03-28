@@ -17,4 +17,4 @@ def do_end(state, params, pg, verbose=True):
 	sol = state.se.eval_upto(params['edi'], 5)
 	for s in sol: assert s < 1000
 	if verbose:
-		print "EDI: " + str(sol)
+		print("EDI: " + str(sol))

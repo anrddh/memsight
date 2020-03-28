@@ -11,7 +11,7 @@ from struct import unpack
 import sys
 import os
 
-import thread
+import _thread
 
 from angr import exploration_techniques
 
@@ -37,10 +37,10 @@ def get_state(proj, start, mem_type = 1, remove_options = set()):
     if mem_type == 0:
         state.memory.write_strategies.insert(0,
                                                  angr.concretization_strategies.SimConcretizationStrategyRange(
-                                                     sys.maxint))
+                                                     sys.maxsize))
         state.memory.read_strategies.insert(0,
                                                 angr.concretization_strategies.SimConcretizationStrategyRange(
-                                                    sys.maxint))
+                                                    sys.maxsize))
 
     return state
 
@@ -98,7 +98,7 @@ def solve_flag_2():
 
     # Sscanf is looking for '%d %d %d %d %d %d' which ends up dropping 6 ints onto the stack
     # We will create 6 symbolic values onto the stack to mimic this
-    for i in xrange(6):
+    for i in range(6):
         state.stack_push(state.solver.BVS('int{}'.format(i), 4*8))
 
     # Attempt to find a path to the end of the phase_2 function while avoiding the bomb_explode
@@ -112,7 +112,7 @@ def solve_flag_2():
 
         answer = []
 
-        for _ in xrange(3):
+        for _ in range(3):
             curr_int = found.solver.eval(found.stack_pop())
 
             # We are popping off 8 bytes at a time
@@ -231,7 +231,7 @@ def solve_flag_5():
     found = sm.found[0]
 
     mem = found.memory.load(string_addr, 32)
-    for i in xrange(32):
+    for i in range(32):
         found.add_constraints(is_alnum(found, mem.get_byte(i)))
     return found.solver.eval(mem, cast_to=str).split('\x00')[0]
     # more than one solution could, for example, be returned like this:
@@ -287,46 +287,46 @@ def solve_secret():
     return str(found.solver.eval(flag))
 
 def main():
-    print "Flag    1: " + solve_flag_1()
-    print "Flag    2: " + solve_flag_2()
-    print "Flag(s) 3: " + str(solve_flag_3())
-    print "Flag    4: " + solve_flag_4()
-    print "Flag    5: " + solve_flag_5()
-    print "Flag    6: " + solve_flag_6()
-    print "Secret   : " + solve_secret()
+    print("Flag    1: " + solve_flag_1())
+    print("Flag    2: " + solve_flag_2())
+    print("Flag(s) 3: " + str(solve_flag_3()))
+    print("Flag    4: " + solve_flag_4())
+    print("Flag    5: " + solve_flag_5())
+    print("Flag    6: " + solve_flag_6())
+    print("Secret   : " + solve_secret())
 
 def test():
 
     assert solve_flag_1() == 'Border relations with Canada have never been better.'
-    print "Phase #1 OK"
+    print("Phase #1 OK")
 
     assert solve_flag_2() == '1 2 4 8 16 32'
-    print "Phase #2 OK"
+    print("Phase #2 OK")
 
     args_3 = ["0 207", "1 311", "2 707", "3 256", "4 389", "5 206", "6 682", "7 327"]
     res_3 = solve_flag_3()
     assert len(res_3) == len(args_3)
     for s in args_3:
         assert s in res_3
-    print "Phase #3 OK"
+    print("Phase #3 OK")
 
     assert solve_flag_4() == '7 0'
-    print "Phase #4 OK"
+    print("Phase #4 OK")
 
     assert solve_flag_5().lower() == 'ionefg'
-    print "Phase #5 OK"
+    print("Phase #5 OK")
 
     assert solve_flag_6() == '4 3 2 1 6 5'
-    print "Phase #6 OK"
+    print("Phase #6 OK")
 
     assert solve_secret() == '22'
-    print "Phase #6+ OK"
+    print("Phase #6+ OK")
 
 def travis_keep_alive():
     # travis kills a job if not output is emitted
     while True:
         sleep(60 * 2)
-        print "Alive..."
+        print("Alive...")
 
 if __name__ == '__main__':
 
@@ -340,4 +340,4 @@ if __name__ == '__main__':
     import time
     start_time = time.time()
     test()
-    print "Elapsed time: " + str(time.time() - start_time)
+    print("Elapsed time: " + str(time.time() - start_time))

@@ -58,13 +58,13 @@ def update_counter(elapsed, f):
         last_dump_time = total_time
 
 def print_profiling_time_stats(depth=None, pg=None):
-    print
-    print "Profiling stats" + ("at depth=" + str(depth) if depth is not None else "") + ":"
-    print
+    print()
+    print("Profiling stats" + ("at depth=" + str(depth) if depth is not None else "") + ":")
+    print()
     for ff in time_profile:
-        print "\t" + str(ff) + ": ncall=" + str(time_profile[ff][0]) + " ctime=" + str(time_profile[ff][1])
-    print
-    print
+        print("\t" + str(ff) + ": ncall=" + str(time_profile[ff][0]) + " ctime=" + str(time_profile[ff][1]))
+    print()
+    print()
 
 
 def profile(func):
@@ -135,7 +135,7 @@ class MemoryItem(object):
         if (other is None
             or self.t != other.t
             # or (type(self.addr) in (int, long) and type(other.addr) in (int, long) and self.addr != other.addr)
-            or (type(self.obj) in (int, long) and type(other.obj) in (int, long) and self.obj != other.obj)
+            or (type(self.obj) in (int, int) and type(other.obj) in (int, int) and self.obj != other.obj)
             or id(self.guard) != id(other.guard)  # conservative
             or not self._compare_obj(other)):
             return False
@@ -399,16 +399,16 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
         data = self._raw_ast(data)
 
         if op == 'store':
-            data = self._convert_to_ast(data, size if isinstance(size, (int, long)) else None)
+            data = self._convert_to_ast(data, size if isinstance(size, int) else None)
 
         reg_name = None
         if self._id == 'reg':
 
-            if type(addr) in (int, long):
+            if type(addr) in (int, int):
                 reg_name = reverse_addr_reg(self, addr)
                 if self.verbose: self.log("\t" + str(addr) + " => " + str(reg_name))
 
-            if isinstance(addr, basestring):
+            if isinstance(addr, str):
                 reg_name = addr
                 addr, size_reg = resolve_location_name(self, addr)
                 if self.verbose: self.log("\t" + str(addr) + " => " + str(reg_name))
@@ -425,11 +425,11 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
         # if this is a store then size can be derived from data that needs to be stored
         if size is None and type(data) in (claripy.ast.bv.BV, claripy.ast.fp.FP):
             size = len(data) / 8
-            assert type(size) in (int, long)
+            assert type(size) in (int, int)
             if self.verbose: self.log("\tsize => " + str(size))
 
         # convert size to BVV if concrete
-        if type(size) in (int, long):
+        if type(size) in (int, int):
             size = self.state.se.BVV(size, self.state.arch.bits)
 
         if op == 'load' and size is None:
@@ -450,7 +450,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
 
         assert size is not None
         if self._id == 'reg':
-            assert type(addr) in (int, long)
+            assert type(addr) in (int, int)
 
         return addr, size, reg_name
 
@@ -511,10 +511,10 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                 import pdb
                 pdb.set_trace()
 
-            if type(size) in (int, long):
+            if type(size) in (int, int):
 
                 # concrete address
-                if type(addr) in (int, long):
+                if type(addr) in (int, int):
                     min_addr = addr
                     max_addr = addr
 
@@ -537,18 +537,18 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                 data = None
                 for k in range(size):
 
-                    if self.verbose: self.log("\tLoading from: " + str(hex(addr + k) if type(addr) in (long, int) else (addr + k)))
+                    if self.verbose: self.log("\tLoading from: " + str(hex(addr + k) if type(addr) in (int, int) else (addr + k)))
                     #if self.verbose: self.log("\tAddr = [" + str(hex(min_addr + k)) + ", " + str(hex(max_addr + k)) + "]")
 
                     P = self._concrete_memory.find(min_addr + k, max_addr + k, True)
 
                     P += [x.data for x in self._symbolic_memory.search(min_addr + k, max_addr + k + 1)]
-                    P = sorted(P, key=lambda x: (x.t, (x.addr if type(x.addr) in (int, long) else 0)))
+                    P = sorted(P, key=lambda x: (x.t, (x.addr if type(x.addr) in (int, int) else 0)))
 
                     if self.verbose: self.log("\tMatching formulas:" + str(len(P)))
                     #if self.verbose: self.log("\tMatching formulas:" + str(P))
 
-                    if min_addr == max_addr and len(P) == 1 and type(P[0].addr) in (long, int) and P[0].guard is None:
+                    if min_addr == max_addr and len(P) == 1 and type(P[0].addr) in (int, int) and P[0].guard is None:
                         obj = P[0].obj
 
                     else:
@@ -624,7 +624,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                         b2 = angr_data[(8 * (k + 1)) - 1: (8 * (k))]
                         comparison, v1, v2 = self._compare_bytes(b1, b2)
                         if not comparison:
-                            print "Mismatch at offset " + str(k)
+                            print("Mismatch at offset " + str(k))
                             import pdb
                             pdb.set_trace()
 
@@ -637,7 +637,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             if type(e) in (angr.errors.SimSegfaultError,):
                 raise e
 
-            print str(e)
+            print(str(e))
             import traceback
             traceback.print_exc()
             sys.exit(1)
@@ -655,7 +655,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             p = P[i]
             v = p.obj
 
-            is_good_candidate = type(p.addr) in (int, long) and p.guard is None
+            is_good_candidate = type(p.addr) in (int, int) and p.guard is None
             mergeable = False
 
             if len(merged_p) > 0 and is_good_candidate \
@@ -751,8 +751,8 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                     condition = None
                 elif self.state.se.is_false(condition):
                     if priv is not None: self.state.scratch.pop_priv()
-                    print condition
-                    print "condition is false... skipping..."
+                    print(condition)
+                    print("condition is false... skipping...")
                     return
 
             # store with conditional size
@@ -763,11 +763,11 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                 self.state.se.add(self.state.se.ULE(size, conditional_size[1]))
 
             # convert data to BVV if concrete
-            data = convert_to_ast(self.state, data, size if isinstance(size, (int, long)) else None)
+            data = convert_to_ast(self.state, data, size if isinstance(size, int) else None)
 
-            if type(size) in (int, long) or conditional_size is not None:
+            if type(size) in (int, int) or conditional_size is not None:
 
-                assert len(data) / 8 == (size if type(size) in (int, long) else conditional_size[1])
+                assert len(data) / 8 == (size if type(size) in (int, int) else conditional_size[1])
 
                 # simplify
                 data = self.state.se.simplify(data)
@@ -782,7 +782,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                     # if self.verbose: self.log("\treversed data: " + str(data))
 
                 # concrete address
-                if type(addr) in (int, long):
+                if type(addr) in (int, int):
                     min_addr = addr
                     max_addr = addr
 
@@ -802,19 +802,19 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
 
                 compilation_flag = 0
 
-                for k in range(size if type(size) in (int, long) else conditional_size[1]):
+                for k in range(size if type(size) in (int, int) else conditional_size[1]):
 
                     compilation_flag += 1
 
                     obj = [data, k]
-                    if type(size) in (int, long) and size == 1:
+                    if type(size) in (int, int) and size == 1:
                         obj = data
 
                     if conditional_size is not None and k + 1 >= conditional_size[0]:
                         assert k + 1 <= conditional_size[1]
                         condition = self.state.se.UGT(size, k) if initial_condition is None else claripy.And(
                             initial_condition, self.state.se.UGT(size, k + 1))
-                        if self.verbose: print "\tstore condition: " + str(condition)
+                        if self.verbose: print("\tstore condition: " + str(condition))
 
                     if not internal:
                         if self.verbose: self.log("\tSlicing data with offset " + str(k))  # + " => " + str(obj))
@@ -895,7 +895,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                 if self.angr_memory is not None:
 
                     try:
-                        if self.verbose: print "Comparing..."
+                        if self.verbose: print("Comparing...")
 
                         addrs = [x for x in range(min_addr, max_addr + self.state.se.max_int(size))]
 
@@ -924,7 +924,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                 raise e
 
             import traceback
-            print str(e)
+            print(str(e))
             traceback.print_exc()
             sys.exit(1)
 
@@ -1014,7 +1014,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             # Convert the string into a BVV, *regardless of endness*
             bits = len(data_e) * 8
             data_e = self.state.se.BVV(data_e, bits)
-        elif type(data_e) in (int, long):
+        elif type(data_e) in (int, int):
             data_e = self.state.se.BVV(data_e, size_e * 8 if size_e is not None
             else self.state.arch.bits)
         else:
@@ -1116,7 +1116,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
     @profile
     def log(self, msg, verbose=True):
         if verbose:
-            print("[" + self._id + "] " + msg)
+            print(("[" + self._id + "] " + msg))
             # l.debug("[" + self._id + "] " + msg)
 
     @profile
@@ -1139,7 +1139,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             self.angr_memory.map_region(addr, length, permissions)
 
         if self.verbose: self.log("Required mapping of length " + str(length) + " at " + str(
-            hex(addr if type(addr) in (long, int) else addr.args[0])) + ".")
+            hex(addr if type(addr) in (int, int) else addr.args[0])) + ".")
 
         if hasattr(self.state, 'state_couner'):
             self.state.state_counter.log.append("[" + hex(self.state.regs.ip.args[0]) + "] " + "Map Region")
@@ -1152,7 +1152,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             addr = self.state.se.max_int(addr)
 
         # make perms a bitvector to easily check them
-        if isinstance(permissions, (int, long)):
+        if isinstance(permissions, int):
             permissions = claripy.BVV(permissions, 3)
 
         # keep track of this region
@@ -1285,7 +1285,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             if type(e) in (angr.errors.SimSegfaultError,):
                 raise e
 
-            print full_stack()
+            print(full_stack())
 
     @profile
     def merge(self, others, merge_conditions, common_ancestor=None):
@@ -1471,7 +1471,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             error = None
 
             try:
-                P = self._symbolic_memory.search(0, sys.maxint)
+                P = self._symbolic_memory.search(0, sys.maxsize)
                 for p in P:
                     # assert p.data.t >= 0
                     if (p.data.t > 0 and p.data.t >= ancestor_timestamp) or (
@@ -1486,7 +1486,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                 pdb.set_trace()
 
             try:
-                P = other._symbolic_memory.search(0, sys.maxint)
+                P = other._symbolic_memory.search(0, sys.maxsize)
                 for p in P:
                     # assert p.data.t >= 0
                     if (p.data.t > 0 and p.data.t >= ancestor_timestamp) or (
@@ -1516,8 +1516,8 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             if addrs is None:
 
                 addrs = set()
-                for i, p in self.angr_memory.mem._pages.items():
-                    addrs.update([k + i * 0x1000 for k in p.keys()])
+                for i, p in list(self.angr_memory.mem._pages.items()):
+                    addrs.update([k + i * 0x1000 for k in list(p.keys())])
 
                 # Note: This check may fail. Indeed, we may have written
                 #       an address even if this was not 
@@ -1525,8 +1525,8 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                 #       solutions for an address. Even if the address is symbolic
                 #       this could have forced loading of init data.
                 addrs2 = set()
-                for i, p in self._concrete_memory._pages.items():
-                    addrs2.update([k + i * 0x1000 for k in p.keys()])
+                for i, p in list(self._concrete_memory._pages.items()):
+                    addrs2.update([k + i * 0x1000 for k in list(p.keys())])
 
                 if len(addrs2 - addrs) > 0:
                     # print "Our concrete memory has more addresses than angr's concrete memory..."
@@ -1537,7 +1537,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                 addrs |= addrs2
                 addrs = sorted(list(addrs))
 
-            if self.verbose: print "\tChecking " + str(len(addrs)) + " addrs"
+            if self.verbose: print("\tChecking " + str(len(addrs)) + " addrs")
 
             # for addr check value
             for a in addrs:
@@ -1545,16 +1545,16 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                 # if (a / 0x1000) not in self.angr_memory.mem._pages or (a % 0x1000) not in self.angr_memory.mem._pages[a / 0x1000]._storage:
                 #    continue
 
-                if self.verbose: print "\t\tComparing addr: " + hex(a)
+                if self.verbose: print("\t\tComparing addr: " + hex(a))
 
                 v1 = self.load(a, 1, internal=True)
                 v2 = self.angr_memory.load(a, 1)
                 comparison, s1, s2 = self._compare_bytes(v1, v2)
 
                 if not comparison:
-                    if self.verbose: print "\t\tMismatch at " + hex(a)
-                    if self.verbose: print "\t\tValues from us:   " + str(s1)
-                    if self.verbose: print "\t\tValues from angr: " + str(s2)
+                    if self.verbose: print("\t\tMismatch at " + hex(a))
+                    if self.verbose: print("\t\tValues from us:   " + str(s1))
+                    if self.verbose: print("\t\tValues from angr: " + str(s2))
 
                     import pdb
                     pdb.set_trace()
@@ -1583,9 +1583,9 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             if self.same(b1, b2):
                 return True, b1, b2
 
-            print "Comparing using models: "
-            print "\t" + str(b1)
-            print "\t" + str(b2)
+            print("Comparing using models: ")
+            print("\t" + str(b1))
+            print("\t" + str(b2))
 
             b1 = sorted(self.state.se.eval_upto(b1, 260))
             b2 = sorted(self.state.se.eval_upto(b2, 260))
@@ -1627,7 +1627,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
         if max_search is None:
             max_search = angr.state_plugins.SimSymbolicMemory.DEFAULT_MAX_SEARCH
 
-        if isinstance(start, (int, long)):
+        if isinstance(start, int):
             start = self.state.se.BVV(start, self.state.arch.bits)
 
         constraints = [ ]
@@ -1705,7 +1705,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
 
     def __contains__(self, addr):
 
-        if isinstance(addr, (int, long)):
+        if isinstance(addr, int):
             addr = addr
         elif self.state.se.symbolic(addr):
             log.warning("Currently unable to do SimMemory.__contains__ on symbolic variables.")
@@ -1714,7 +1714,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             addr = self.state.se.eval(addr)
 
         # concrete address
-        if type(addr) in (int, long):
+        if type(addr) in (int, int):
             min_addr = addr
             max_addr = addr
 
@@ -1734,6 +1734,6 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
         P = self._concrete_memory.find(min_addr, max_addr, True)
 
         P += [x.data for x in self._symbolic_memory.search(min_addr, max_addr + 1)]
-        P = sorted(P, key=lambda x: (x.t, (x.addr if type(x.addr) in (int, long) else 0)))
+        P = sorted(P, key=lambda x: (x.t, (x.addr if type(x.addr) in (int, int) else 0)))
 
         return len(P) > 0

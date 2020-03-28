@@ -23,9 +23,9 @@ def get_permission_backer(proj):
 
 def parse_args(argv):
     if len(argv) < 2 or len(argv) > 3:
-        print "python " + sys.argv[0] + " [0|1] <binary>"
-        print "0: angr default memory"
-        print "1: memsight memory"
+        print("python " + sys.argv[0] + " [0|1] <binary>")
+        print("0: angr default memory")
+        print("1: memsight memory")
         sys.exit(1)
 
     t = 1
@@ -54,7 +54,7 @@ def get_obj_byte(obj, offset):
 
     # BVV slicing is extremely slow...
     if obj.op == 'BVV':
-        assert type(obj.args[0]) in (long,int)
+        assert type(obj.args[0]) in (int,int)
         value = obj.args[0]
         return claripy.BVV(value >> 8 * (len(obj) / 8 - 1 - offset) & 0xFF, 8)
 
@@ -85,7 +85,7 @@ def convert_to_ast(state, data_e, size_e=None):
         # Convert the string into a BVV, *regardless of endness*
         bits = len(data_e) * 8
         data_e = state.se.BVV(data_e, bits)
-    elif type(data_e) in (int, long):
+    elif type(data_e) in (int, int):
         data_e = state.se.BVV(data_e, size_e*8 if size_e is not None else state.arch.bits)
     else:
         data_e = data_e.to_bv()
@@ -94,8 +94,8 @@ def convert_to_ast(state, data_e, size_e=None):
 
 def resolve_location_name(memory, name):
 
-    stn_map = { 'st%d' % n: n for n in xrange(8) }
-    tag_map = { 'tag%d' % n: n for n in xrange(8) }
+    stn_map = { 'st%d' % n: n for n in range(8) }
+    tag_map = { 'tag%d' % n: n for n in range(8) }
 
     if memory.category == 'reg':
         if memory.state.arch.name in ('X86', 'AMD64'):
@@ -113,9 +113,9 @@ def resolve_location_name(memory, name):
 def reverse_addr_reg(memory, addr):
 
     assert memory.category == 'reg'
-    assert type(addr) in (int, long)
+    assert type(addr) in (int, int)
 
-    for name, offset_size in memory.state.arch.registers.iteritems():
+    for name, offset_size in memory.state.arch.registers.items():
         offset = offset_size[0]
         size = offset_size[1]
         if addr in range(offset, offset + size):

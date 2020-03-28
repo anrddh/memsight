@@ -25,4 +25,4 @@ def do_end(state, params, pg, verbose=True):
     answer = unpack('II', state.solver.eval(
         state.memory.load(state.regs.rsp - 0x18 + 0x8, 8), cast_to=str))
 
-    print ' '.join(map(str, answer))
+    print(' '.join(map(str, answer)))

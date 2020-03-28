@@ -84,11 +84,11 @@ class SymbolicMemory(simuvex.plugins.plugin.SimStatePlugin):
         reg_name = None
         if self._id == 'reg': 
 
-            if type(addr) in (int, long):
+            if type(addr) in (int, int):
                 reg_name = utils.reverse_addr_reg(self, addr)
                 self.log("\t" + str(addr) + " => " + str(reg_name))
 
-            if isinstance(addr, basestring):
+            if isinstance(addr, str):
                 reg_name = addr
                 addr, size_reg = utils.resolve_location_name(self, addr)
                 self.log("\t" + str(addr) + " => " + str(reg_name))
@@ -105,11 +105,11 @@ class SymbolicMemory(simuvex.plugins.plugin.SimStatePlugin):
         # if this is a store then size can be derived from data that needs to be stored
         if size is None and type(data) in (claripy.ast.bv.BV,):
             size = len(data) / 8
-            assert type(size) in (int, long)
+            assert type(size) in (int, int)
             self.log("\tsize => " + str(size))
 
         # convert size to BVV if concrete
-        if type(size) in (int, long):
+        if type(size) in (int, int):
             size = self.state.se.BVV(size, self.state.arch.bits)
 
         # make size concrete
@@ -123,7 +123,7 @@ class SymbolicMemory(simuvex.plugins.plugin.SimStatePlugin):
 
         assert size is not None
         if self._id == 'reg':
-            assert type(addr) in (int, long)
+            assert type(addr) in (int, int)
 
         return addr, size, reg_name
 
@@ -142,7 +142,7 @@ class SymbolicMemory(simuvex.plugins.plugin.SimStatePlugin):
         addr, size, reg_name = self.memory_op(addr, size)        
 
         # addr is concrete, size is concrete
-        if type(addr) in (int, long) and type(size) in (int, long):
+        if type(addr) in (int, int) and type(size) in (int, int):
 
             data = None
 
@@ -218,7 +218,7 @@ class SymbolicMemory(simuvex.plugins.plugin.SimStatePlugin):
             self.log("\treturning data: " + str(data))
             return data
 
-        elif type(addr) not in (int, long) and addr.symbolic and type(size) in (int, long):
+        elif type(addr) not in (int, int) and addr.symbolic and type(size) in (int, int):
 
             # get a set of possible write address
             concrete_addresses = self._concretize_addr(addr)
@@ -293,10 +293,10 @@ class SymbolicMemory(simuvex.plugins.plugin.SimStatePlugin):
         addr, size, reg_name = self.memory_op(addr, size, data)
 
         # convert data to BVV if concrete
-        data = utils.convert_to_ast(self.state, data, size if isinstance(size, (int, long)) else None)
+        data = utils.convert_to_ast(self.state, data, size if isinstance(size, int) else None)
 
         # addr is concrete and size is concrete
-        if type(addr) in (int, long) and type(size) in (int, long):
+        if type(addr) in (int, int) and type(size) in (int, int):
 
             assert len(data) / 8 == size
 
@@ -319,7 +319,7 @@ class SymbolicMemory(simuvex.plugins.plugin.SimStatePlugin):
             return
 
         # symbolic addr and concrete size
-        elif type(addr) not in (int, long) and addr.symbolic and type(size) in (int, long):
+        elif type(addr) not in (int, int) and addr.symbolic and type(size) in (int, int):
 
             self.log("\tsymbolic write")
 
@@ -372,14 +372,14 @@ class SymbolicMemory(simuvex.plugins.plugin.SimStatePlugin):
 
     def dump_memory(self):
         for k in sorted(self._memory.keys()):
-            print "[" + str(k) + "]: " + str(self._memory[k]) 
+            print("[" + str(k) + "]: " + str(self._memory[k])) 
 
 
     def _concretize_addr(self, addr):
 
         try:
             # concrete
-            if isinstance(addr, (int, long)):
+            if isinstance(addr, int):
                 return [ addr ]
             
             # constant
@@ -400,7 +400,7 @@ class SymbolicMemory(simuvex.plugins.plugin.SimStatePlugin):
             return res
 
         except Exception as e:
-            print "Exception: " + str(e)
+            print("Exception: " + str(e))
             import traceback
             traceback.print_exc()
 

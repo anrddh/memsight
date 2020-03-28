@@ -238,7 +238,7 @@ if __name__ == '__main__':
     R = [[32, 63], [32, 42], [25, 33], [10, 22]]
 
     for r in R:
-        print "Adding: " +  str(r[0]) + '-' + str(r[1])
+        print("Adding: " +  str(r[0]) + '-' + str(r[1]))
         t.add(r[0], r[1], str(r[0]) + '-' + str(r[1]))
-        print t
-        print
+        print(t)
+        print()
