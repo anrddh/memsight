@@ -1,7 +1,6 @@
 import imp
 import sys
 import os
-import exceptions
 
 def get_target_addrs(fname):
 
