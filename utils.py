@@ -56,7 +56,7 @@ def get_obj_byte(obj, offset):
     if obj.op == 'BVV':
         assert type(obj.args[0]) in (int,int)
         value = obj.args[0]
-        return claripy.BVV(value >> 8 * (len(obj) / 8 - 1 - offset) & 0xFF, 8)
+        return claripy.BVV(value >> 8 * (len(obj) // 8 - 1 - offset) & 0xFF, 8)
 
     # slice the object using angr
     left = len(obj) - (offset * 8) - 1

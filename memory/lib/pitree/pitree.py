@@ -3,7 +3,7 @@
 """
 pitree: cloneable paged interval tree
 
-Copyright 2017 Camil Demetrescu 
+Copyright 2017 Camil Demetrescu
 -- based on modified version of chaimleib's IntervalTree
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ limitations under the License.
 import collections, sys
 from .intervaltree import * # use custom interval tree
 from .interval import *
-from pympler import asizeof    
+from pympler import asizeof
 
 # ----------------------------------------------------------------------
 # page
@@ -79,9 +79,9 @@ class page:
             self.lazycopy = False
             self.tree = self.tree.copy() # this clones Interval objects in the tree
             self.lookup.clear()
-            for i in self.tree: 
+            for i in self.tree:
                 self.lookup[i] = i
-        
+
     def __repr__(self):
         return "[begin="     + str(self.begin)      + \
                ", end="      + str(self.end)        + \
@@ -226,8 +226,8 @@ class pitree:
         :rtype: set of objects of type Interval (fields: begin, end, data)
         """
         assert begin < end
-        begin_p = begin / self._page_size
-        end_p   = end   / self._page_size + 1
+        begin_p = begin // self._page_size
+        end_p   = end   // self._page_size + 1
         res = set()
         for i in self._pages.search(begin_p, end_p):
             res.update(i.data.tree.search(begin, end))

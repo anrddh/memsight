@@ -288,14 +288,16 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
         # init memory
         if self._memory_backer is not None:
 
-            _ffi = cffi.FFI()
-            for addr, backer in self._memory_backer.cbackers:
+            #import pdb; pdb.set_trace()
 
-                data = _ffi.buffer(backer)[:]
-                obj = claripy.BVV(data)
+            _ffi = cffi.FFI()
+            for addr, backer in self._memory_backer.backers():
+
+                #data = _ffi.from_buffer(backer)
+                obj = claripy.BVV(int.from_bytes(backer, 'big'), len(backer) * 8)
 
                 page_size = 0x1000
-                size = len(obj) / 8
+                size = len(obj) // 8
                 data_offset = 0
                 page_index = int(addr / page_size)
                 page_offset = addr % page_size
@@ -424,7 +426,8 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
 
         # if this is a store then size can be derived from data that needs to be stored
         if size is None and type(data) in (claripy.ast.bv.BV, claripy.ast.fp.FP):
-            size = len(data) / 8
+            size = len(data) // 8
+            #import pdb; pdb.set_trace()
             assert type(size) in (int, int)
             if self.verbose: self.log("\tsize => " + str(size))
 
@@ -619,7 +622,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
 
                 if angr_data is not None:
                     assert len(data) == len(angr_data)
-                    for k in range(len(data) / 8):
+                    for k in range(len(data) // 8):
                         b1 = data[(8 * (k + 1)) - 1: (8 * k)]
                         b2 = angr_data[(8 * (k + 1)) - 1: (8 * (k))]
                         comparison, v1, v2 = self._compare_bytes(b1, b2)
@@ -1160,7 +1163,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
 
         if self.verbose: self.log("\t" + str(self._mapped_regions[-1]))
 
-        # sort mapped regions 
+        # sort mapped regions
         self._mapped_regions = sorted(self._mapped_regions, key=lambda x: x.addr)
 
     @profile
@@ -1520,8 +1523,8 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                     addrs.update([k + i * 0x1000 for k in list(p.keys())])
 
                 # Note: This check may fail. Indeed, we may have written
-                #       an address even if this was not 
-                #       addressable since we are not getting actual 
+                #       an address even if this was not
+                #       addressable since we are not getting actual
                 #       solutions for an address. Even if the address is symbolic
                 #       this could have forced loading of init data.
                 addrs2 = set()
