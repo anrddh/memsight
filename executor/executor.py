@@ -163,14 +163,14 @@ class Executor(object):
 
         return len(pg.found) > 0
 
+    def explore(self, mem_memory=None, reg_memory=None):
 
-    def explore(self, mem_memory = None, reg_memory = None):
-
-        sm, data, veritesting, max_rounds = self._common_run(mem_memory, reg_memory)
+        sm, data, veritesting, max_rounds = self._common_run(mem_memory,
+                                                             reg_memory)
 
         avoided = []
         found = []
-        num_inst=1
+        num_inst = 1
 
         k = 0
 
@@ -182,21 +182,21 @@ class Executor(object):
 
             k += 1
 
-
             state = sm.active[0]
             addr = state.ip.args[0]
-            
+
             print("\n###################################################")
             print("\nNumber of active states: " + str(len(sm.active)))
             print("Executing first active path in the list")
-            print("Path is at address: " + str(hex(addr))) 
+            print("Path is at address: " + str(hex(addr)))
 
-            code = self.project.factory.block(addr=addr, num_inst=num_inst, backup_state=state)  
+            code = self.project.factory.block(addr=addr, num_inst=num_inst,
+                                              backup_state=state)
 
             # print original code line
             print("Assembly code: ")
             k = 0
-            for i, s in enumerate(code.vex.statements): 
+            for i, s in enumerate(code.vex.statements):
                 if isinstance(s, pyvex.stmt.IMark):
                     print("\t" + str(code.capstone.insns[k]))
                     k += 1

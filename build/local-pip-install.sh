@@ -25,7 +25,9 @@ python3 -m pip install --no-deps -r $DIR/../requirements.txt
 
 # patches
 echo "Applying patches"
-cd ~/.virtualenvs/$VIRTUALENV_NAME/lib/python3.7/site-packages/
+# Use the correct python version directory
+py_ver=$(basename $(ls -d ~/.virtualenvs/${VIRTUALENV_NAME}/lib/python*))
+cd ~/.virtualenvs/$VIRTUALENV_NAME/lib/${py_ver}/site-packages/
 
 # track angr changes
 cd angr; git init; git add . >/dev/null; git commit -a -m "initial import" >/dev/null; cd ..
