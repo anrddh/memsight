@@ -195,8 +195,7 @@ def test_symbolic_merge(state):
 def test_symbolic_access(state):
 
     # an address which is in a valid region
-    start_addr = state.libc.heap_location
-    state.libc.heap_location += 32  # mark 32 bytes as used
+    start_addr = state.heap.allocate(32)
 
     #assert state.se.any_int(state.memory.permissions(start_addr)) == 0x3
     #assert state.se.any_int(state.memory.permissions(start_addr + 1)) == 0x3
