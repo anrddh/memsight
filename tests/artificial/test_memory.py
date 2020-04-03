@@ -287,4 +287,3 @@ if __name__ == '__main__':
 
     if t == 1:
         test_same_operator(state.copy())
-
