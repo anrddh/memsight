@@ -79,7 +79,9 @@ class Node(object):
         z.left_depth = 1 + max(self.left_depth, self.right_depth)
         lm = self.left_child.max  if self.left_child  is not None else None
         rm = self.right_child.max if self.right_child is not None else None
-        self.max = max(self.interval.end, lm, rm)
+        self.max = max(self.interval.end,
+                       lm if lm is not None else self.interval.end,
+                       rm if rm is not None else self.interval.end)
         lm = z.left_child.max  if z.left_child  is not None else None
         rm = z.right_child.max if z.right_child is not None else None
         z.max = max(z.interval.end, lm, rm) # max(None, *) is always *

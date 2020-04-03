@@ -24,7 +24,6 @@ class Interval(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        import pdb; pdb.set_trace()
         return hash((self.begin, self.end, self.data))
 
     def __str__(self):
