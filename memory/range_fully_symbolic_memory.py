@@ -143,7 +143,7 @@ class MemoryItem(object):
         return True
 
     def __hash__(self):
-        return hash((self.addr, self._obj, self.t, self.guard))
+        return hash((self.addr, self._obj[0], self._obj[1], self.t, self.guard))
 
     def copy(self):
         return MemoryItem(self.addr, self.obj, self.t, self.guard)
