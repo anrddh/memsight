@@ -9,7 +9,7 @@ from memory import factory
 
 
 def check(state, obj, exp_values, conditions=()):
-    r = state.se.any_n_int(obj, len(exp_values) + 1, extra_constraints=conditions)
+    r = state.se.eval_upto(obj, len(exp_values) + 1, extra_constraints=conditions)
     if len(r) != len(exp_values) or set(r) != set(exp_values):
         print("Mismatch:")
         print("\tobtained: " + str(r))
@@ -21,32 +21,32 @@ def test_store_with_symbolic_size(state):
     val = 0x01020304
     state.memory.store(0x0, claripy.BVV(val, 32))
     res = state.memory.load(0x0, 4)
-    assert not state.se.symbolic(res) and state.se.any_int(res) == val
+    assert not state.se.symbolic(res) and state.se.eval(res) == val
 
     val_2 = 0x0506
     s_size = claripy.BVS('size', 32)
     state.se.add(s_size <= 2)
     state.memory.store(0x1, claripy.BVV(val_2, 16), s_size)
-    res = state.se.any_n_int(state.memory.load(0x0, 4), 10)
+    res = state.se.eval_upto(state.memory.load(0x0, 4), 10)
     # print ' '.join([hex(x) for x in res])
-    assert len(state.se.any_n_int(state.memory.load(0x0, 4), 10)) == 3
+    assert len(state.se.eval_upto(state.memory.load(0x0, 4), 10)) == 3
 
     s0 = state.copy()
-    assert len(s0.se.any_n_int(s0.memory.load(0x0, 4), 10)) == 3
+    assert len(s0.se.eval_upto(s0.memory.load(0x0, 4), 10)) == 3
 
     s1 = state.copy()
     s1.se.add(s_size == 0)
-    res = s1.se.any_n_int(s1.memory.load(0x0, 4), 2)
+    res = s1.se.eval_upto(s1.memory.load(0x0, 4), 2)
     assert len(res) == 1 and res[0] == val
 
     s2 = state.copy()
     s2.se.add(s_size == 1)
-    res = s2.se.any_n_int(s2.memory.load(0x0, 4), 2)
+    res = s2.se.eval_upto(s2.memory.load(0x0, 4), 2)
     assert len(res) == 1 and res[0] == 0x01050304
 
     s3 = state.copy()
     s3.se.add(s_size == 2)
-    res = s3.se.any_n_int(s3.memory.load(0x0, 4), 2)
+    res = s3.se.eval_upto(s3.memory.load(0x0, 4), 2)
     assert len(res) == 1 and res[0] == 0x01050604
 
 
@@ -62,7 +62,7 @@ def test_store_with_symbolic_addr_and_symbolic_size(state):
 
     res = state.memory.load(addr, 4)
 
-    res = state.se.any_n_int(res, 20)
+    res = state.se.eval_upto(res, 20)
     assert len(res) == 1 and res[0] == val
 
     val_2 = 0x0506
@@ -71,21 +71,21 @@ def test_store_with_symbolic_addr_and_symbolic_size(state):
     state.memory.store(addr + 1, claripy.BVV(val_2, 16), s_size)
 
     s0 = state.copy()
-    assert len(s0.se.any_n_int(s0.memory.load(addr, 4), 10)) == 3
+    assert len(s0.se.eval_upto(s0.memory.load(addr, 4), 10)) == 3
 
     s1 = state.copy()
     s1.se.add(s_size == 0)
-    res = s1.se.any_n_int(s1.memory.load(addr, 4), 2)
+    res = s1.se.eval_upto(s1.memory.load(addr, 4), 2)
     assert len(res) == 1 and res[0] == val
 
     s2 = state.copy()
     s2.se.add(s_size == 1)
-    res = s2.se.any_n_int(s2.memory.load(addr, 4), 2)
+    res = s2.se.eval_upto(s2.memory.load(addr, 4), 2)
     assert len(res) == 1 and res[0] == 0x01050304
 
     s3 = state.copy()
     s3.se.add(s_size == 2)
-    res = s3.se.any_n_int(s3.memory.load(addr, 4), 2)
+    res = s3.se.eval_upto(s3.memory.load(addr, 4), 2)
     assert len(res) == 1 and res[0] == 0x01050604
 
 def test_concrete_merge(state):
@@ -105,10 +105,10 @@ def test_concrete_merge(state):
 
     res = s3.memory.load(0x0, 4)
 
-    r1 = s3.se.any_n_int(res, 2, extra_constraints=(guard > 0,))
+    r1 = s3.se.eval_upto(res, 2, extra_constraints=(guard > 0,))
     assert len(r1) == 1 and r1[0] == 0x01050304
 
-    r2 = s3.se.any_n_int(res, 2, extra_constraints=(guard <= 0,))
+    r2 = s3.se.eval_upto(res, 2, extra_constraints=(guard <= 0,))
     assert len(r2) == 1 and r2[0] == 0x01060304
 
 def test_concrete_merge_with_condition(state):
@@ -130,17 +130,17 @@ def test_concrete_merge_with_condition(state):
 
     res = s3.memory.load(0x0, 4)
 
-    r1 = s3.se.any_n_int(res, 2, extra_constraints=(guard > 1,))
+    r1 = s3.se.eval_upto(res, 2, extra_constraints=(guard > 1,))
     assert len(r1) == 1 and r1[0] == 0x01050304
 
-    r2 = s3.se.any_n_int(res, 3, extra_constraints=(guard <= 1,))
+    r2 = s3.se.eval_upto(res, 3, extra_constraints=(guard <= 1,))
     assert len(r2) == 2 and set(r2) == set([0x01020304, 0x01060304])
 
     s4 = s3.copy()
     s4.se.add(guard == 1)
     s4.se.add(cond != 0)
     res = s4.memory.load(0x0, 4)
-    r3 = s4.se.any_n_int(res, 2)
+    r3 = s4.se.eval_upto(res, 2)
     assert len(r3) == 1 and r3[0] == 0x01060304
 
 def test_symbolic_merge(state):
@@ -208,7 +208,7 @@ def test_symbolic_access(state):
     addr = claripy.BVS('addr', 64)
     state.se.add(addr >= start_addr)
     state.se.add(addr <= start_addr + 1)
-    addrs = state.se.any_n_int(addr, 10)
+    addrs = state.se.eval_upto(addr, 10)
     assert len(addrs) == 2 and set(addrs) == set([start_addr, start_addr + 1])
 
     val = 0xABCD
@@ -218,7 +218,7 @@ def test_symbolic_access(state):
 
     # symbolic load at addr
     res = state.memory.load(addr, 2)
-    res = state.se.any_n_int(res, 20)
+    res = state.se.eval_upto(res, 20)
     assert len(res) == 1 and res[0] == val
 
 
