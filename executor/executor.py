@@ -25,7 +25,7 @@ class Executor(object):
         self.project = angr.Project(self.binary, load_options={'auto_load_libs' : False})
 
     def _print_constraints(self, constraints, old_constraints):
-        
+
         print("Path constraints:")
         if old_constraints is None:
             for i in range(len(constraints)):
@@ -70,7 +70,7 @@ class Executor(object):
             if len(removed) == 0 and len(added) == 0:
                 print("\tSame as previous state.")
 
-            print()       
+            print()
 
     def _common_run(self, mem_memory = None, reg_memory = None, verbose=True):
 
@@ -149,7 +149,7 @@ class Executor(object):
             if verbose:
                 print("Reached the target")
                 print(pg)
-            state = pg.found[0].state
+            state = pg.found[0]
             self.config.do_end(state, data, pg, verbose)
         else:
             if verbose:
@@ -185,18 +185,18 @@ class Executor(object):
 
             state = sm.active[0]
             addr = state.ip.args[0]
-            
+
             print("\n###################################################")
             print("\nNumber of active states: " + str(len(sm.active)))
             print("Executing first active path in the list")
-            print("Path is at address: " + str(hex(addr))) 
+            print("Path is at address: " + str(hex(addr)))
 
-            code = self.project.factory.block(addr=addr, num_inst=num_inst, backup_state=state)  
+            code = self.project.factory.block(addr=addr, num_inst=num_inst, backup_state=state)
 
             # print original code line
             print("Assembly code: ")
             k = 0
-            for i, s in enumerate(code.vex.statements): 
+            for i, s in enumerate(code.vex.statements):
                 if isinstance(s, pyvex.stmt.IMark):
                     print("\t" + str(code.capstone.insns[k]))
                     k += 1
@@ -210,7 +210,7 @@ class Executor(object):
             except ReferenceError:
                 pass
 
-            #pdb.set_trace()    
+            #pdb.set_trace()
 
             print(sm)
             print(sm.active)
@@ -224,13 +224,13 @@ class Executor(object):
 
             remove = []
             for path in sm.active:
-            
+
                 ip = path.state.ip.args[0]
                 if ip in self.avoid:
                     avoided.append(path)
-                    remove.append(path) 
+                    remove.append(path)
                     print("\nPath executing " + str(hex(ip)) + " has been moved to avoided paths...")
-                
+
                 if ip in self.end:
                     found.append(path)
                     remove.append(path)
