@@ -206,31 +206,32 @@ class Executor(object):
             # print path constraint
             try:
                 if state.history.parent is not None:
-                    self._print_constraints(state.se.constraints, state.history.parent.state.se.constraints)
+                    self._print_constraints(
+                        state.se.constraints,
+                        state.history.parent.state.se.constraints
+                    )
             except ReferenceError:
                 pass
-
-            #pdb.set_trace()    
 
             print(sm)
             print(sm.active)
 
             print("# Start of execution")
             if not veritesting:
-                sm.step(opt_level=1, num_inst=num_inst, )  # selector_func = lambda x: x is path
+                # selector_func = lambda x: x is path
+                sm.step(opt_level=1, num_inst=num_inst,)
             else:
                 sm.step()
             print("# End of execution\n")
 
             remove = []
             for path in sm.active:
-            
-                ip = path.state.ip.args[0]
+                ip = path.ip.args[0]
                 if ip in self.avoid:
                     avoided.append(path)
-                    remove.append(path) 
+                    remove.append(path)
                     print("\nPath executing " + str(hex(ip)) + " has been moved to avoided paths...")
-                
+
                 if ip in self.end:
                     found.append(path)
                     remove.append(path)
