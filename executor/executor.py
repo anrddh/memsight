@@ -149,7 +149,7 @@ class Executor(object):
             if verbose:
                 print("Reached the target")
                 print(pg)
-            state = pg.found[0].state
+            state = pg.found[0]
             self.config.do_end(state, data, pg, verbose)
         else:
             if verbose:
