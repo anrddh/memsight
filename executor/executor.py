@@ -5,7 +5,6 @@ import angr
 import sys
 import pyvex
 import pdb
-import logging
 
 class Executor(object):
 
@@ -22,10 +21,10 @@ class Executor(object):
             print("Avoid addresses: " + ' '.join([str(hex(a)) for a in self.avoid]))
             print()
 
-        self.project = angr.Project(self.binary, load_options={'auto_load_libs' : False})
+        self.project = angr.Project(self.binary,
+                                    load_options={'auto_load_libs': False})
 
     def _print_constraints(self, constraints, old_constraints):
-        
         print("Path constraints:")
         if old_constraints is None:
             for i in range(len(constraints)):
@@ -70,9 +69,9 @@ class Executor(object):
             if len(removed) == 0 and len(added) == 0:
                 print("\tSame as previous state.")
 
-            print()       
+            print()
 
-    def _common_run(self, mem_memory = None, reg_memory = None, verbose=True):
+    def _common_run(self, mem_memory=None, reg_memory=None, verbose=True):
 
         plugins = {}
         if mem_memory is not None:
@@ -82,7 +81,6 @@ class Executor(object):
         if len(plugins) == 0:
             plugins = None
 
-        add_options = None
         add_options = {
                         #angr.options.CGC_ZERO_FILL_UNCONSTRAINED_MEMORY,
                         angr.options.SYMBOLIC_WRITE_ADDRESSES,
@@ -92,8 +90,10 @@ class Executor(object):
         if self.start is not None:
             state = self.project.factory.blank_state(addr=self.start, remove_options={angr.options.LAZY_SOLVES}, add_options=add_options, plugins=plugins)
         else:
-            state = self.project.factory.entry_state(remove_options={angr.options.LAZY_SOLVES},
-                                                     add_options=add_options, plugins=plugins)
+            state = self.project.factory.entry_state(
+                remove_options={angr.options.LAZY_SOLVES},
+                add_options=add_options, plugins=plugins
+            )
 
         data = self.config.do_start(state)
 
@@ -207,8 +207,8 @@ class Executor(object):
             try:
                 if state.history.parent is not None:
                     self._print_constraints(
-                        state.se.constraints,
-                        state.history.parent.state.se.constraints
+                        state.solver.constraints,
+                        state.history.parent.state.solver.constraints
                     )
             except ReferenceError:
                 pass
@@ -241,17 +241,15 @@ class Executor(object):
 
         if len(sm.active) == 0 and len(found) == 0:
             print("Something went wrong: no active path, but no found path!")
-            pdb.set_trace()
             assert False
             sys.exit(1)
 
-        print("One path has reached target instruction: " + str(hex(found[0].state.ip.args[0])))
-        state = found[0].state
+        print("One path has reached target instruction: " + str(hex(found[0].ip.args[0])))
+        state = found[0]
         print(len(found))
         self.config.do_end(state, data, sm)
         print("Constraints:")
         self._print_constraints(state.se.constraints, None)
-        #pdb.set_trace()
 
         print()
         print("Memory footprint: \t" + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024) + " MB")

@@ -20,7 +20,7 @@ def do_end(state, params, pg, verbose=True):
 
     expected_sol = [0, 1]
     o = state.se.Concat(params['edi'], params['esi'])
-    sol = state.se.eval_upto(o, 5)
+    sol = state.solver.eval_upto(o, 5)
     import ctypes
     esi = []
     edi = []

@@ -9,7 +9,7 @@ def get_target_addrs(fname):
         f = os.path.basename(fname)
         file = str(p + "/" + f + ".py")
         config = imp.load_source(f, file)
-    except exceptions.IOError as e:
+    except IOError as e:
         print(e)
         print("config python script related to binary file is missing")
         print("Create " + str(fname) + ".py with the following functions:")
