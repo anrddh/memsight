@@ -1,5 +1,14 @@
+"""Node object stored in the pitree.
+
+A node is an interval which supports balancing operations.
+"""
+
+
 class Node(object):
+    """A node stores intervals representing memory."""
+
     def __init__(self, interval, mmax, parent):
+        """Initialize the node, pointers start as None and it has no depth."""
         self.interval = interval
         self.max = mmax
         self.parent = parent
@@ -10,14 +19,16 @@ class Node(object):
 
     @property
     def balancing_factor(self):
+        """Provide the balancing factor for this tree, should ideally be 0."""
         return self.right_depth - self.left_depth
 
     def rebalance(self):
+        """Rebalance the interval tree for better performance."""
         p = self.parent
         if isinstance(p, Root):
             return
         if self == p.left_child:
-            p.left_depth  = 1 + max(self.left_depth, self.right_depth)
+            p.left_depth = 1 + max(self.left_depth, self.right_depth)
         else:
             p.right_depth = 1 + max(self.left_depth, self.right_depth)
 
@@ -37,6 +48,7 @@ class Node(object):
             p.rebalance()
 
     def rotationRight(self):
+        """Perform a right rotation on a subtree."""
         z = self.left_child
         t = z.right_child
         if self.parent.left_child == self:
@@ -44,7 +56,9 @@ class Node(object):
         elif self.parent.right_child == self:
             self.parent.right_child = z
         else:
-            raise Exception("rotationRight(): something wrong " + str(self.interval))
+            raise Exception("rotationRight(): something wrong "
+                            + str(self.interval))
+
         z.parent = self.parent
         self.parent = z
         z.right_child = self
