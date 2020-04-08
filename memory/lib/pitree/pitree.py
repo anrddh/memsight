@@ -202,13 +202,15 @@ class pitree:
     def add(self, begin, end, item=None):
         """
         Insert new interval with key [begin, end) and value item.
+
         :param begin: interval begin point (key)
         :param end: interval end point (key)
         :param item: value associated with key
         """
         assert begin < end
-        begin_p = begin / self._page_size
-        end_p   = end   / self._page_size + 1
+        # Presumably is supposed to be integer arithmetic
+        begin_p = begin // self._page_size
+        end_p = end // self._page_size + 1
         self._copy_on_write()
         try:
             p = self._lookup[(begin_p, end_p)]
@@ -223,14 +225,15 @@ class pitree:
 
     def search(self, begin, end):
         """
-        Get all intervals overlapping with the interval [begin, end)
+        Get all intervals overlapping with the interval [begin, end).
+
         :param begin: interval begin point (key)
         :param end: interval end point (key)
         :rtype: set of objects of type Interval (fields: begin, end, data)
         """
         assert begin < end
         begin_p = begin // self._page_size
-        end_p   = end   // self._page_size + 1
+        end_p = end // self._page_size + 1
         res = set()
         for i in self._pages.search(begin_p, end_p):
             res.update(i.data.tree.search(begin, end))
@@ -238,20 +241,19 @@ class pitree:
 
     def update_item(self, i, new_item):
         """
-        Update item field of interval in the tree
+        Update item field of interval in the tree.
+
         :param i: object of type Interval previously returned by search
         :param new_item: new value for interval
         """
         self._copy_on_write()
-        begin_p = i.begin / self._page_size
-        end_p   = i.end   / self._page_size + 1
+        begin_p = i.begin // self._page_size
+        end_p = i.end // self._page_size + 1
         p = self._lookup[(begin_p, end_p)]
         return p.update_item(i, new_item)
 
     def _copy_on_write(self):
-        """
-        Clone pages and lookup data structures
-        """
+        """Clone pages and lookup data structures."""
         if (self._lazycopy):
             self._lazycopy = False
             pages  = IntervalTree()
