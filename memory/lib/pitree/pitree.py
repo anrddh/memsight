@@ -41,19 +41,21 @@ class page:
 
     def copy(self):
         """
-        Lazy copy of the page - O(1)
+        Lazy copy of the page - O(1).
+
         :rtype: page
         """
         self.lazycopy = True
         p = page(self.begin, self.end)
         p.lazycopy = True
-        p.tree     = self.tree
-        p.lookup   = self.lookup
+        p.tree = self.tree
+        p.lookup = self.lookup
         return p
 
     def add(self, begin, end, item=None):
         """
         Insert new interval with key [begin, end] and value item.
+
         :param begin: interval begin point (key)
         :param end: interval end point (key)
         :param item: value associated with key
@@ -189,6 +191,7 @@ class pitree:
         """
         self._lazycopy = True
         cloned = pitree(self._page_size)
+        # NOTE: The following lines aren't pep8 compliant.
         cloned._lazycopy    = True
         cloned._pages       = self._pages
         cloned._lookup      = self._lookup

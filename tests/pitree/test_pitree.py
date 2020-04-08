@@ -1,9 +1,14 @@
-import os, sys, traceback
+import os
+import sys
+import traceback
 from bcolors import bcolors
 
+# XXX: This really shouldn't be a thing,
+# indicates the project being set up incorrectly.
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from memory.lib.pitree.pitree import *
+from memory.lib.pitree.pitree import pitree, Interval
+
 
 def test_1():
     t = pitree()
@@ -11,18 +16,22 @@ def test_1():
     ris = t.search(20, 25)
     assert len(ris) == 1 and ris.pop() == Interval(1, 200)
 
+
 def test_2():
     t = pitree()
     t.add(1, 200)
     i = t._pages.root.child.interval
     assert i.begin == 0 and i.end == 2
 
+
 def test_3():
     t = pitree()
     t.add(1, 20)
     t.add(2, 30)
     t.add(130, 140)
-    assert len(t._pages) == 2 and len(t._pages.root.child.interval.data.tree) == 2 and len(t._pages.root.child.right_child.interval.data.tree) == 1
+    assert(len(t._pages) == 2 and
+           len(t._pages.root.child.interval.data.tree) == 2 and
+           len(t._pages.root.child.right_child.interval.data.tree) == 1)
 
 def test_4():
     t = pitree()
