@@ -1,10 +1,10 @@
 import sys
 import logging
 
-from .executor import executor
-from .memory import factory
-from .memory import range_fully_symbolic_memory
-from .utils import parse_args
+from executor import executor
+from memory import factory
+from memory import range_fully_symbolic_memory
+from utils import parse_args
 
 if __name__ == '__main__':
 

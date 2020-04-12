@@ -1,5 +1,14 @@
+"""Node object stored in the pitree.
+
+A node is an interval which supports balancing operations.
+"""
+
+
 class Node(object):
+    """A node stores intervals representing memory."""
+
     def __init__(self, interval, mmax, parent):
+        """Initialize the node, pointers start as None and it has no depth."""
         self.interval = interval
         self.max = mmax
         self.parent = parent
@@ -10,14 +19,16 @@ class Node(object):
 
     @property
     def balancing_factor(self):
+        """Provide the balancing factor for this tree, should ideally be 0."""
         return self.right_depth - self.left_depth
 
     def rebalance(self):
+        """Rebalance the interval tree for better performance."""
         p = self.parent
         if isinstance(p, Root):
             return
         if self == p.left_child:
-            p.left_depth  = 1 + max(self.left_depth, self.right_depth)
+            p.left_depth = 1 + max(self.left_depth, self.right_depth)
         else:
             p.right_depth = 1 + max(self.left_depth, self.right_depth)
 
@@ -37,6 +48,7 @@ class Node(object):
             p.rebalance()
 
     def rotationRight(self):
+        """Perform a right rotation on a subtree."""
         z = self.left_child
         t = z.right_child
         if self.parent.left_child == self:
@@ -44,7 +56,9 @@ class Node(object):
         elif self.parent.right_child == self:
             self.parent.right_child = z
         else:
-            raise Exception("rotationRight(): something wrong " + str(self.interval))
+            raise Exception("rotationRight(): something wrong "
+                            + str(self.interval))
+
         z.parent = self.parent
         self.parent = z
         z.right_child = self
@@ -53,14 +67,27 @@ class Node(object):
             t.parent = self
         self.left_depth = z.right_depth
         z.right_depth = 1 + max(self.left_depth, self.right_depth)
-        lm = self.left_child.max  if self.left_child  is not None else None
+        # NOTE: The ternary here is important, it short circuits the
+        # member access of .max, which might value error if either child
+        # doesn't exist.
+        lm = self.left_child.max if self.left_child is not None else None
         rm = self.right_child.max if self.right_child is not None else None
-        self.max = max(self.interval.end, lm, rm)
-        lm = z.left_child.max  if z.left_child  is not None else None
+
+        # NOTE: This commented code below is no longer supperted in python3,
+        # hence the following two lines. This might break if all three things
+        # in tup_for_max are None, but I should hope this isn't the case.
+        # self.max = max(self.interval.end, lm, rm)
+        tup_for_max = (self.interval.end, rm, lm)
+        def pruned_max(tup): return max(i for i in tup if i is not None)
+        self.max = pruned_max(tup_for_max)
+        # Same item mentioned above applies here too.
+        lm = z.left_child.max if z.left_child is not None else None
         rm = z.right_child.max if z.right_child is not None else None
-        z.max = max(z.interval.end, lm, rm) # max(None, *) is always *
+        tup_for_max = (z.interval.end, lm, rm)
+        z.max = pruned_max(tup_for_max)
 
     def rotationLeft(self):
+        """Perform a left rotation on a subtree."""
         z = self.right_child
         t = z.left_child
         if self.parent.left_child == self:
@@ -68,7 +95,11 @@ class Node(object):
         elif self.parent.right_child == self:
             self.parent.right_child = z
         else:
-            raise Exception("rotationLeft(): something wrong 1 " + str(self.interval))
+            raise Exception("rotationLeft(): something wrong 1 "
+                            + str(self.interval))
+
+        # XXX: The logic below has duplicated code and could be merged
+        # with rotationRight to be more generic.
         z.parent = self.parent
         self.parent = z
         z.left_child = self
@@ -77,14 +108,16 @@ class Node(object):
             t.parent = self
         self.right_depth = z.left_depth
         z.left_depth = 1 + max(self.left_depth, self.right_depth)
-        lm = self.left_child.max  if self.left_child  is not None else None
+        lm = self.left_child.max if self.left_child is not None else None
         rm = self.right_child.max if self.right_child is not None else None
-        self.max = max(self.interval.end,
-                       lm if lm is not None else self.interval.end,
-                       rm if rm is not None else self.interval.end)
-        lm = z.left_child.max  if z.left_child  is not None else None
+        tup_for_max = (self.interval.end, rm, lm)
+        def pruned_max(tup): return max(i for i in tup if i is not None)
+        self.max = pruned_max(tup_for_max)
+
+        lm = z.left_child.max if z.left_child is not None else None
         rm = z.right_child.max if z.right_child is not None else None
-        z.max = max(z.interval.end, lm, rm) # max(None, *) is always *
+        tup_for_max = (z.interval.end, lm, rm)
+        z.max = pruned_max(tup_for_max)
 
     # complexity is O(min(n, k log(n)) where k is the number of overlapping intervals
     def search(self, interval, ris):

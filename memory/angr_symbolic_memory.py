@@ -16,13 +16,13 @@ l.setLevel(logging.DEBUG)
 
 class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
 
-    def __init__(self, memory_backer=None, 
-                permissions_backer=None, 
-                kind=None, 
-                arch=None, 
-                endness=None, 
-                check_permissions=None,
-                angr_memory=None):
+    def __init__(self, memory_backer=None,
+                 permissions_backer=None,
+                 kind=None,
+                 arch=None,
+                 endness=None,
+                 check_permissions=None,
+                 angr_memory=None):
         angr.state_plugins.plugin.SimStatePlugin.__init__(self)
 
         self.verbose = False
@@ -37,7 +37,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             self._angr_memory = angr.state_plugins.SimSymbolicMemory(memory_id="reg", endness=arch.register_endness)
 
     def set_state(self, state):
-        self._angr_memory.set_state(state) 
+        self._angr_memory.set_state(state)
 
 
     def load(self, addr, size=None, condition=None, fallback=None, add_constraints=None, action=None, endness=None, inspect=True):
@@ -72,7 +72,8 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
         self._angr_memory.map_region(addr, length, permissions)
 
     def merge(self, others, merge_conditions, common_ancestor=None):
-        res = self._angr_memory.merge(others, merge_conditions, common_ancestor)
+        res = self._angr_memory.merge(others, merge_conditions,
+                                      common_ancestor)
         return res
 
     @property
