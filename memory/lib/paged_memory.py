@@ -29,7 +29,7 @@ class PagedMemory(object):
         self.memory = memory
 
     def _get_index_offset(self, addr):
-        index = addr / self.PAGE_SIZE
+        index = addr // self.PAGE_SIZE
         offset = addr % self.PAGE_SIZE
         return index, offset
 
@@ -127,8 +127,8 @@ class PagedMemory(object):
             #print "Large range... pages are " + str(len(self._pages))
 
             indexes = sorted(self._pages.keys())
-            min_index = int(start / self.PAGE_SIZE)
-            max_index = int(end / self.PAGE_SIZE)
+            min_index = int(start // self.PAGE_SIZE)
+            max_index = int(end // self.PAGE_SIZE)
             offset = start % self.PAGE_SIZE
 
             #print "min_index=" + str(min_index) + " max_index=" + str(max_index)
@@ -205,4 +205,3 @@ class PagedMemory(object):
 
     def copy(self, memory):
         return PagedMemory(pages=dict(self._pages), memory=memory)
-

@@ -1332,7 +1332,6 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
 
     @profile
     def _merge_concrete_memory(self, other, merge_conditions, verbose=False):
-
         # start_time = time.time()
 
         try:

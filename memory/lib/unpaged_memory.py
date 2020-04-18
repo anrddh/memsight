@@ -30,7 +30,7 @@ class PagedMemory(object):
 
         pages = dict()
         for a in self._addrs:
-            index = a / 0x1000
+            index = a // 0x1000
             if index not in pages:
                 pages[index] = dict()
 
@@ -58,4 +58,3 @@ class PagedMemory(object):
 
     def copy(self, memory):
         return PagedMemory(pages=dict(self._addrs), memory=memory)
-
