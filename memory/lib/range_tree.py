@@ -78,8 +78,8 @@ class RangeTree(object):
 
         has_intersection = self._intersect(range_min, range_max, start, end)
         add_to_this_node = has_intersection and range_len - (min(end, range_max) - max(start, range_min) + 1) < self.cutoff
-        add_to_left_child = has_intersection and not add_to_this_node and start < range_min + range_len / 2
-        add_to_right_child = has_intersection and not add_to_this_node and end >= range_min + range_len / 2
+        add_to_left_child = has_intersection and not add_to_this_node and start < range_min + range_len // 2
+        add_to_right_child = has_intersection and not add_to_this_node and end >= range_min + range_len // 2
 
         #print "Add to: current=" + str(add_to_this_node) + " left=" + str(add_to_left_child) + " right=" + str(add_to_right_child)
 
@@ -93,7 +93,7 @@ class RangeTree(object):
                 join = None
 
             else:
-                mid = range_min + (range_len / 2)
+                mid = range_min + (range_len // 2)
                 if not add_to_left_child and self._intersect(join[1][0], join[1][1], range_min, mid - 1):
                     add_to_left_child = True
                     #print "add_to_left_child flipped to true since intersect with join"
@@ -113,7 +113,7 @@ class RangeTree(object):
                 self.count += 1
 
                 # add old_node as a child
-                if range_min + (range_len / 2) - 1 >= node[1][1]:
+                if range_min + (range_len // 2) - 1 >= node[1][1]:
                     node[2][0] = old_node
                 else:
                     node[2][1] = old_node
@@ -141,7 +141,7 @@ class RangeTree(object):
 
             #print "Recursive on left child of [" + str(range_min) + ", " + str(range_max) + "]"
 
-            r = (range_min, range_min + (range_len / 2) - 1)
+            r = (range_min, range_min + (range_len // 2) - 1)
             left, to_add_from_left = self._insert(node[2][0] if node is not None else None, r[0], r[1], start, end, obj, join)
             if node is None:
                 return left, to_add_from_left
@@ -154,7 +154,7 @@ class RangeTree(object):
 
             #print "Recursive on right child of [" + str(range_min) + ", " + str(range_max) + "]"
 
-            r = (range_min + (range_len / 2), range_max)
+            r = (range_min + (range_len // 2), range_max)
             right, to_add_from_right = self._insert(node[2][1] if node is not None else None, r[0], r[1], start, end, obj, join)
             if node is None:
                 return right, to_add_from_right
@@ -203,10 +203,10 @@ class RangeTree(object):
         #print "range_len: " + str(range_len)
 
         while True:
-            if (min + (range_len / 2)) - 1 < lower:
-                min += range_len / 2
+            if (min + (range_len // 2)) - 1 < lower:
+                min += range_len // 2
                 #print "min: " + str(min)
-                range_len /= 2
+                range_len //= 2
             else:
                 break
 

@@ -69,7 +69,7 @@ def get_obj_bytes(obj, offset, size):
     if offset == 0 and size * 8 == len(obj):
         return obj, size, size
 
-    size = min(size, (len(obj) / 8) - offset)
+    size = min(size, (len(obj) // 8) - offset)
 
     # slice the object... very slow :/
     left = len(obj) - (offset * 8) - 1

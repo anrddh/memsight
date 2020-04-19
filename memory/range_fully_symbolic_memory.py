@@ -439,7 +439,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
             size = self.state.se.BVV(size, self.state.arch.bits)
 
         if op == 'load' and size is None:
-            size = self.state.arch.bits / 8
+            size = self.state.arch.bits // 8
 
         # make size concrete
         if size is not None:
@@ -538,7 +538,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
                 self._load_init_data(min_addr, (max_addr - min_addr) + size)
 
                 if angr_data is not None:
-                    assert size == len(angr_data) / 8
+                    assert size == len(angr_data) // 8
 
                 data = None
                 for k in range(size):
@@ -773,7 +773,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
 
             if type(size) in (int, int) or conditional_size is not None:
 
-                assert len(data) / 8 == (size if type(size) in (int, int) else conditional_size[1])
+                assert len(data) // 8 == (size if type(size) in (int, int) else conditional_size[1])
 
                 # simplify
                 data = self.state.se.simplify(data)
@@ -1295,7 +1295,7 @@ class SymbolicMemory(angr.state_plugins.plugin.SimStatePlugin):
 
     @profile
     def merge(self, others, merge_conditions, common_ancestor=None):
-
+        """Merge two states with a common ancestor."""
         assert common_ancestor is not None
         if type(common_ancestor) in (SimStateHistory,):
             ancestor_timestamp = common_ancestor.timestamps[0]
