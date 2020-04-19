@@ -230,7 +230,8 @@ class Executor(object):
                 if ip in self.avoid:
                     avoided.append(path)
                     remove.append(path)
-                    print("\nPath executing " + str(hex(ip)) + " has been moved to avoided paths...")
+                    print("\nPath executing " + str(hex(ip)) +
+                          " has been moved to avoided paths...")
 
                 if ip in self.end:
                     found.append(path)
@@ -244,12 +245,13 @@ class Executor(object):
             assert False
             sys.exit(1)
 
-        print("One path has reached target instruction: " + str(hex(found[0].ip.args[0])))
+        print("One path has reached target instruction: "
+              + str(hex(found[0].ip.args[0])))
         state = found[0]
         print(len(found))
         self.config.do_end(state, data, sm)
         print("Constraints:")
-        self._print_constraints(state.se.constraints, None)
+        self._print_constraints(state.solver.constraints, None)
 
         print()
         print("Memory footprint: \t" + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024) + " MB")
